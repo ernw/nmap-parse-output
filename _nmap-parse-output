@@ -1,0 +1,32 @@
+#/usr/bin/env bash
+
+_nmap-parse-output_completions()
+{
+  local NPO_SCRIPT="$(whereis -b nmap-parse-output | cut -d ' ' -f 2-)"
+  if [ -h "$NPO_SCRIPT" ]; then
+    local NPO_SCRIPT="$(readlink "$NPO_SCRIPT")"
+  fi
+  local NMAP_PARSE_OUTPUT_DIR="$( dirname "$NPO_SCRIPT" )/nmap-parse-output-xslt"
+  
+  if [ -n "$ZSH_VERSION" ]; then
+    # ZSH
+    local COMP0="${COMP_WORDS[0]}"
+    local COMP1="${COMP_WORDS[1]}"
+  elif [ -n "$BASH_VERSION" ]; then
+    # Bash
+    local COMP0="${COMP_WORDS[1]}"
+    local COMP1="${COMP_WORDS[2]}"
+  else
+    echo "unsupported shell"
+  fi
+
+  if [ "${COMP_CWORD}" = "1" ]; then
+    # nmap output filename
+    COMPREPLY=($(compgen -f "$COMP0"))
+  elif [ "${COMP_CWORD}" = "2" ]; then
+    # command
+    COMPREPLY=($(compgen -W "$(ls -1 $NMAP_PARSE_OUTPUT_DIR/ | sed 's/\.xslt/ /')" "$COMP1"))
+  fi
+}
+
+complete -F _nmap-parse-output_completions nmap-parse-output
