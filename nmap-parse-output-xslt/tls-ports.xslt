@@ -1,6 +1,6 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:npo="http://xmlns.sven.to/npo">
 <npo:comment>
-        Extracts a list of all TLS ports in host:port format. Works only after script scan. Can be used to do a testssl.sh scan.
+        Extracts a list of all TLS ports in host:port format. Works only after a script scan. Can be used to do a testssl.sh scan.
         Example testssl.sh command (generates a text and HTML report for each host):
             for f in `cat ~/ssl-hosts.txt`; do ./testssl.sh --logfile ~/testssl.sh-results/$f.log --htmlfile ~/testssl.sh-results/$f.html $f; done
 </npo:comment>

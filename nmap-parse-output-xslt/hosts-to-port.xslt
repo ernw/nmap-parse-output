@@ -1,6 +1,6 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:npo="http://xmlns.sven.to/npo">
 <npo:comment>[port]
-        Extracts a list of all hosts that has the given port open in 'host (hostname)' format.
+        Extracts a list of all hosts that have the given port open in 'host (hostname)' format.
 </npo:comment>
     <xsl:output method="text" />
     <xsl:strip-space elements="*" />

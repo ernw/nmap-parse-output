@@ -1,6 +1,6 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:npo="http://xmlns.sven.to/npo">
 <npo:comment>
-        Generates a comma seperated list of all ports. Can be useful to verify if open/closed ports reachable from another host or generate port lists for specific enviroments. Filter closed/filtered ports.
+        Generates a comma-separated list of all ports. Can be used to verify if open/closed ports reachable from another host or generate port lists for specific environments. Filter closed/filtered ports.
 </npo:comment>
     <xsl:output method="text" />
     <xsl:strip-space elements="*" />

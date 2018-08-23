@@ -1,6 +1,6 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:npo="http://xmlns.sven.to/npo">
 <npo:comment>
-        Generates a line break seperated list of all hosts with open ports. Can be useful to perform an additional scan on this hosts.
+        Generates a line break separated list of all hosts with open ports. Can be used to perform an additional scan on this hosts.
 </npo:comment>
 <npo:post-processor>sort | uniq</npo:post-processor>
 

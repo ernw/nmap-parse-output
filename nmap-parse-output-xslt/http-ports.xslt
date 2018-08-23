@@ -1,7 +1,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:npo="http://xmlns.sven.to/npo">
 <npo:comment>
-        Generates a line seperated list of http(s) all ports.
-        Currently the following services are detected as http: http, https, http-alt, https-alt, http-proxy, sip, rtsp (potentially incomplete)
+        Generates a line separated list of HTTP(s) all ports.
+        Currently, the following services are detected as HTTP: http, https, http-alt, https-alt, http-proxy, sip, rtsp (potentially incomplete)
 </npo:comment>
     <xsl:output method="text" />
     <xsl:strip-space elements="*" />
