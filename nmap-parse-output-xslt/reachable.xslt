@@ -1,6 +1,6 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:npo="http://xmlns.sven.to/npo">
 <npo:comment>
-        Removes all hosts where all ports a filtered. Can be usefull to generate a smaller HTML report.
+        Removes all hosts where all ports a filtered. Can be used to generate a smaller HTML report.
         Example usage to generate HTML report:
             nmap-parse-output scan.xml reachable | nmap-parse-output - html &gt; scan.html
 </npo:comment>

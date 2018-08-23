@@ -16,7 +16,7 @@ if [ $# -lt 2 ]
 then
      echo "Usage: $0 NMAP_XML_OUTPUT COMMAND [OPTIONS]"
      echo 
-     echo "Converts/manipulates/extracts data from nmap scan output"
+     echo "Converts/manipulates/extracts data from nmap scan XML output."
      echo 
      #echo "Global Options:"
      #echo -e "  -w\t Write Output File"
@@ -28,7 +28,7 @@ then
      done
      
      echo
-     echo "[v1.2.0]"
+     echo "[v1.2.1]"
      
      exit 1
 fi
