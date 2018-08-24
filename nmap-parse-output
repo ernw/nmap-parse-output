@@ -14,7 +14,7 @@ xslt_dir=$SCRIPT_DIR/nmap-parse-output-xslt
 # Show help:
 if [ $# -lt 2 ]
 then
-     echo "Usage: $0 NMAP_XML_OUTPUT COMMAND [OPTIONS]"
+     echo "Usage: $0 NMAP_XML_OUTPUT COMMAND [OPTIONS]..."
      echo 
      echo "Converts/manipulates/extracts data from nmap scan XML output."
      echo 
@@ -28,16 +28,18 @@ then
      done
      
      echo
-     echo "[v1.2.1]"
+     echo "[v1.3.0]"
      
      exit 1
 fi
- 
+
 # Check if xsltproc is installed
 command -v xsltproc >/dev/null 2>&1 || { echo "Please install xsltproc.  Aborting." >&2; exit 1; }
 
+NMAP_XML_OUTPUT=$1
+
 # Check if input is readable
-[ -f "$1" -o "$1" = "-" ] || { echo "Can't read nmap file.  Aborting." >&2; exit 1; }
+[ -f "$NMAP_XML_OUTPUT" -o "$NMAP_XML_OUTPUT" = "-" ] || { echo "Can't read nmap file.  Aborting." >&2; exit 1; }
 
 xslt=$xslt_dir/$2.xslt
 
@@ -46,11 +48,21 @@ xslt=$xslt_dir/$2.xslt
 # Read post process command from xslt:
 POST_PIPE=`xmllint --xpath "//*[local-name()='post-processor' and namespace-uri()='http://xmlns.sven.to/npo']/text()" $xslt 2>/dev/null`
 
-[ "$3" != "" ] && extra_params="--stringparam param1 $3"
+# Pass remaining parameters to xslt:
+EXTRA_PARAMS=()
+i=0
+shift
+shift
+while [ $# -gt 0 ]
+do
+  ((i++))
+  EXTRA_PARAMS+=(--stringparam "param$i" "$1")
+  shift
+done
 
 if [ -n "$POST_PIPE" ]; then
-  xsltproc $extra_params $xslt "$1" | bash -c "cat - | $POST_PIPE"
+  xsltproc "${EXTRA_PARAMS[@]}" $xslt "$NMAP_XML_OUTPUT" | bash -c "cat - | $POST_PIPE"
 else
-  xsltproc $extra_params $xslt "$1"
+  xsltproc "${EXTRA_PARAMS[@]}" $xslt "$NMAP_XML_OUTPUT"
 fi
 

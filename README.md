@@ -33,10 +33,20 @@ Exclude some hosts from a scan and generate a list of ports:
     $ ./nmap-parse-output scan.xml exclude '192.168.1.1,192.168.1.20' | nmap-parse-output - ports
     22,80,443,8080
 
-
- Filter `scan-all.xml` to include only hosts scanned in `scan-subnet.xml` and write the output to `filtered-scan.xml`:
+Filter `scan-all.xml` to include only hosts scanned in `scan-subnet.xml` and write the output to `filtered-scan.xml`:
 
     $ ./nmap-parse-output scan-all.xml include $(./nmap-parse-output.sh scan-subnet.xml hosts | tr "\n" ",") > filtered-scan.xml
+
+Add comments to a scan, mark specific ports red, and generate a HTML report with the annotations:
+
+    $ ./nmap-parse-output scan.xml comment-ports '8080,10.0.20.4:443' 'this port should be filtered'
+      | ./nmap-parse-output - mark-ports '8080,10.0.20.4:443' red
+      | ./nmap-parse-output - comment-hosts '10.0.20.1' 'look further into this host'
+      | ./nmap-parse-output - html > test.html
+
+Remove all ports found in `scan-before.xml` from `scan-after.xml` and write the output to `filtered-scan.xml`
+
+    $ ./nmap-parse-output scan-after.xml exclude-ports $(./nmap-parse-output.sh scan-before.xml host-ports | tr "\n" ",") > filtered-scan.xml
 
 ## Usage
 
@@ -51,12 +61,26 @@ Exclude some hosts from a scan and generate a list of ports:
             Note: This command is intended for the masscan XML output only.
       blocked-ports 
             Extracts all ports in host:port format, which either admin-prohibited or tcpwrapped.
+      comment-hosts [hosts] [comment]
+            Comments a list of hosts in scan result. Expects a comma-separated list as input. The comment will be displayed in the HTML report.
+            Example:
+                  nmap-parse-output scan.xml comment-hosts '10.0.0.1,192.168.10.1' 'allowed services' | nmap-parse-output - html &gt; report.html
+            You can comment hosts from another scan, too:
+                  nmap-parse-output scan.xml comment-hosts $(./nmap-parse-output.sh scan-subnet.xml hosts | tr "\n" ",") 'this host was scanned in subnet, too.'
+      comment-ports [ports] [comment]
+            Comments a list of ports or hosts with port (in address:port format) in scan result. Expects a comma-separated list as input. The comment will be displayed in the HTML report.
+            Example:
+                  nmap-parse-output scan.xml comment-ports '80,10.0.0.1:8080' 'allowed services' | nmap-parse-output - html &gt; report.html
+            You can comment services, too:
+                  nmap-parse-output scan.xml comment-ports $(./nmap-parse-output.sh scan.xml service http | tr "\n" ",") 'this is a http port'
+      exclude-ports [ports]
+            Excludes a list of ports or ports of a specific host (in address:port format) from a scan result. Expects a comma-separated list as input.
+            You can pipe the output, for instance:
+                  nmap-parse-output scan.xml exclude '80,443,192.168.0.2:80' | nmap-parse-output - service-names
       exclude [hosts]
             Excludes a list of hosts from scan result by its IP address. Expects a comma-separated list as input.
             You can pipe the output, for instance:
                   nmap-parse-output scan.xml exclude '192.168.1.1,192.168.1.20' | nmap-parse-output - service-names
-      filter 
-            TODO: Filter hosts
       host-ports 
             Extracts a list of all *open* ports in host:port format.
       hosts-to-port [port]
@@ -71,10 +95,19 @@ Exclude some hosts from a scan and generate a list of ports:
       http-title 
             Extracts a list of HTTP HTML titles in the following format:
             host:port	HTML title
+      include-ports [ports]
+            Filter a scan by a list of ports or ports of a specific host (in address:port format) so that only the specified ports are in the output. Expects a comma-separated list as input.
+            You can pipe the output, for instance:
+                  nmap-parse-output scan.xml include-ports '80,443,192.168.0.2:8080' | nmap-parse-output - http-title
       include [hosts]
+            Filter a scan by a list of hosts so that only the specified hosts are in the output.
             Filter a list of hosts from scan result by its IP address. Expects a comma-separated list as input.
             You can pipe the output, for instance:
-                  nmap-parse-output scan.xml exclude '192.168.1.1,192.168.1.20' | nmap-parse-output - service-names
+                  nmap-parse-output scan.xml include '192.168.1.1,192.168.1.20' | nmap-parse-output - service-names
+      mark-ports [ports] [color]
+            Marks a list of ports or hosts with port (in address:port format) with the given color in scan result. Expects a comma-separated list as input. The comment will be displayed in the HTML report.
+            Example:
+                  nmap-parse-output scan.xml mark-ports '80,10.0.0.1:8080' red | nmap-parse-output - html &gt; report.html
       port-info [port]
             Extracts a list of extra information about the given port in the following format:
             port;service name;http title
@@ -100,7 +133,7 @@ Exclude some hosts from a scan and generate a list of ports:
       to-json 
             Converts nmap scan output to JSON
 
-      [v1.2.1]
+      [v1.3.0]
 
 
 ## Adding new Commands
@@ -109,7 +142,7 @@ Commands are written as [XSLT](https://en.wikipedia.org/wiki/XSLT). See [nmap-pa
 
 The documentation printed in the help page can be written with he ``<comment>`` tag (XML namespace: http://xmlns.sven.to/npo).
 
-An post processing command can be added with the ``<post-processor>`` tag.
+Parameters will be passed as variables named ``$param1``, ``$param2`` and so on. An post processing command can be added with the ``<post-processor>`` tag.
 
 Example XSLT file:
 
@@ -124,7 +157,7 @@ Example XSLT file:
         
     <xsl:template match="/nmaprun/host/ports/port">
         <!-- add your template here -->
-        <xsl:if test="state/@state='open'">
+        <xsl:if test="state/@state = $param1">
             <xsl:value-of select="../../address/@addr"/>
             <xsl:text>, </xsl:text>
         </xsl:if>
@@ -150,15 +183,3 @@ Bash completion can by enabled by adding the following line to your `~/.bash_pro
 ZSH completion can by enabled by adding the following line to your `~/.zshrc`:
 
     autoload bashcompinit && bashcompinit && source ~/path/to/misc-tools/_nmap-parse-output
-
-## Planned features
-
-* configurable seperators for output (row and columns)
-  * `--row-seperator ","`
-  * `--column-seperator ";"`
-  * `<npo:default-row-seperator>;</npo:default-row-seperator>`
-* exclude/include command with netmask support
-* AUR package 
-* Summarize Scan
-  * Group Hosts with the same open ports
-* Categorize commands: convert, manipulate, extract

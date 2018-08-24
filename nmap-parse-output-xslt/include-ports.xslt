@@ -3,16 +3,15 @@
     xmlns:npo="http://xmlns.sven.to/npo"
     xmlns:str="http://exslt.org/strings"
     extension-element-prefixes="str npo">
-<npo:comment>[hosts]
-        Filter a scan by a list of hosts so that only the specified hosts are in the output.
-        Filter a list of hosts from scan result by its IP address. Expects a comma-separated list as input.
+<npo:comment>[ports]
+        Filter a scan by a list of ports or ports of a specific host (in address:port format) so that only the specified ports are in the output. Expects a comma-separated list as input.
         You can pipe the output, for instance:
-            nmap-parse-output scan.xml include '192.168.1.1,192.168.1.20' | nmap-parse-output - service-names
+            nmap-parse-output scan.xml include-ports '80,443,192.168.0.2:8080' | nmap-parse-output - http-title
 </npo:comment>
 <!-- see http://exslt.org/str/index.html -->
 
 
-<xsl:variable name="include-hosts" select="str:tokenize($param1, ',')" />
+<xsl:variable name="include-ports" select="str:tokenize($param1, ',')" />
 
 <xsl:output method="xml" indent="yes"/>
 <xsl:strip-space elements="*" />
@@ -23,9 +22,8 @@
  </xsl:copy>
 </xsl:template>
 
-<!-- Filter: -->
-<xsl:template match="/nmaprun/host">
-    <xsl:if test="$include-hosts = ./address/@addr">
+<xsl:template match="/nmaprun/host/ports/port">
+    <xsl:if test="$include-ports = ./@portid or $include-ports = concat(../../address/@addr, ':', ./@portid))">
         <xsl:copy>
             <xsl:apply-templates select="@*|node()"/>
         </xsl:copy>

@@ -649,6 +649,12 @@
 </xsl:template>
 <!-- ............................................................ -->
 
+<!-- nmap-parse-output: comments -->
+<!-- ............................................................ -->
+<xsl:template match="npo-comment">
+  <h3>Comment</h3><p><xsl:value-of select="."/></p>
+</xsl:template>
+<!-- ............................................................ -->
 
 
 <!-- hostnames -->
@@ -727,7 +733,17 @@
 
   <xsl:choose>
     <xsl:when test="state/@state = 'open'">
-      <tr class="open">
+      <!-- nmap-parse-output: mark port with specific color -->
+      <xsl:variable name="bg-color"><xsl:choose>
+        <xsl:when test="npo-color-annotation">
+          <xsl:value-of select="npo-color-annotation" />
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="'#CCFFCC'" />
+        </xsl:otherwise>
+      </xsl:choose></xsl:variable>
+      <!-- TODO: check if bg-color is a color name or hex value -->
+      <tr class="open" style="background-color: {$bg-color};">
         <td><xsl:value-of select="@portid" /></td>
         <td><xsl:value-of select="@protocol" /></td>
         <td><xsl:value-of select="state/@state" /></td>
@@ -742,6 +758,17 @@
         <td><xsl:value-of select="service/@version" /><xsl:text>&#xA0;</xsl:text></td>
         <td><xsl:value-of select="service/@extrainfo" /><xsl:text>&#xA0;</xsl:text></td>
       </tr>
+
+      <!-- nmap-parse-output: comment (TODO: integrate this more smoothly) -->
+      <xsl:if test="npo-comment">
+        <tr class="script">
+          <td></td>
+          <td><i><xsl:text>Comment &#xA0;</xsl:text></i></td>
+          <td colspan="6">
+            <pre><xsl:value-of select="npo-comment"/> <xsl:text>&#xA0;</xsl:text></pre>
+          </td>
+        </tr>
+      </xsl:if>
 
       <xsl:for-each select="script">
         <tr class="script">
