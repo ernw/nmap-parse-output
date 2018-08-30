@@ -2,6 +2,8 @@
 <npo:comment>[service-name]
         Extracts a list of all *open* ports with a specific service (e.g. http, ms-wbt-server, smtp) in host:port format.
 </npo:comment>
+<npo:category>extract</npo:category>
+
     <xsl:output method="text" />
     <xsl:strip-space elements="*" />
     <xsl:template match="/nmaprun/host/ports/port">

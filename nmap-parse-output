@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Get script path
+# get script path
 SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
   DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
@@ -9,46 +9,92 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 SCRIPT_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
-xslt_dir=$SCRIPT_DIR/nmap-parse-output-xslt
+XSLT_DIR=$SCRIPT_DIR/nmap-parse-output-xslt
 
-# Show help:
-if [ $# -lt 2 ]
-then
-     echo "Usage: $0 NMAP_XML_OUTPUT COMMAND [OPTIONS]..."
-     echo 
-     echo "Converts/manipulates/extracts data from nmap scan XML output."
-     echo 
-     #echo "Global Options:"
-     #echo -e "  -w\t Write Output File"
-     echo "Commands:"
-     for fullf in $xslt_dir/*.xslt; do
-        f=$(basename $fullf)
-        echo -e -n "  ${f%.*} "
-        xmllint --xpath "//*[local-name()='comment' and namespace-uri()='http://xmlns.sven.to/npo']/text()" $fullf 2>/dev/null || echo -e "\n\t(No documentation)"
-     done
-     
-     echo
-     echo "[v1.3.0]"
-     
-     exit 1
-fi
+# functions (mostly for help)
+function xml_node_text() {
+  xmllint --xpath "//*[local-name()='$2' and namespace-uri()='http://xmlns.sven.to/npo']/text()" $1 2>/dev/null
+}
 
-# Check if xsltproc is installed
+function print_command_category() {
+  echo "$1 Commands:"
+  for fullf in $XSLT_DIR/*.xslt; do
+    if [ "$(xml_node_text $fullf category)" == "$2" ]
+    then
+      f=$(basename $fullf)
+      echo -e -n "  ${f%.*} "
+      xml_node_text $fullf comment || echo -e "\n\t(No documentation)"
+    fi
+  done
+  echo 
+}
+
+function help() {
+  echo "Usage: $0 [options]... <nmap-xml-output> <command> [command-parameters]..."
+  echo 
+  echo "Converts/manipulates/extracts data from nmap scan XML output."
+  echo 
+  echo "Options:"
+  echo -e "  -u, --unfinished-scan\t\t\t try to read an unfinished scan output"
+  echo
+  print_command_category "Extract Data" "extract"
+  print_command_category "Manipulate Scan" "manipulate"
+  print_command_category "Convert Scan" "convert"
+  print_command_category "Misc" ""
+  
+  echo "[v1.4.0]"
+  
+  exit 1
+}
+
+# check if xsltproc is installed
 command -v xsltproc >/dev/null 2>&1 || { echo "Please install xsltproc.  Aborting." >&2; exit 1; }
 
-NMAP_XML_OUTPUT=$1
 
-# Check if input is readable
+# parse global options
+UNFINISHED_SCAN=""
+
+while [ $# -gt 0 ]
+do
+  CURRENT_PARAM=$1
+
+  case "$1" in
+          --help|-h)
+              help
+              ;;
+          --unfinished-scan|-u)
+              UNFINISHED_SCAN="</nmaprun>"
+              ;;
+          *)
+              break
+  esac
+  
+  shift
+done
+
+# NMAP_XML_OUTPUT and COMMAND was not provided; print help:
+if [ $# -lt 2 ]
+then
+  help
+fi
+
+# check if input is readable
+NMAP_XML_OUTPUT=$1
 [ -f "$NMAP_XML_OUTPUT" -o "$NMAP_XML_OUTPUT" = "-" ] || { echo "Can't read nmap file.  Aborting." >&2; exit 1; }
 
-xslt=$xslt_dir/$2.xslt
+XSLT=$XSLT_DIR/$2.xslt
+[ -f $XSLT ] || { echo "Unknown command: $2.  Aborting." >&2; exit 1; }
 
-[ -f $xslt ] || { echo "Unknown command: $2.  Aborting." >&2; exit 1; }
+# read post process command from xslt
+POST_PIPE=$(xml_node_text $XSLT post-processor)
+if [ -z "$POST_PIPE" ]
+then
+  POST_PIPE="cat - "
+else
+  POST_PIPE="cat - | $POST_PIPE"
+fi
 
-# Read post process command from xslt:
-POST_PIPE=`xmllint --xpath "//*[local-name()='post-processor' and namespace-uri()='http://xmlns.sven.to/npo']/text()" $xslt 2>/dev/null`
-
-# Pass remaining parameters to xslt:
+# pass remaining parameters to xslt
 EXTRA_PARAMS=()
 i=0
 shift
@@ -60,9 +106,7 @@ do
   shift
 done
 
-if [ -n "$POST_PIPE" ]; then
-  xsltproc "${EXTRA_PARAMS[@]}" $xslt "$NMAP_XML_OUTPUT" | bash -c "cat - | $POST_PIPE"
-else
-  xsltproc "${EXTRA_PARAMS[@]}" $xslt "$NMAP_XML_OUTPUT"
-fi
-
+# process command on scan XML output
+{ cat "$NMAP_XML_OUTPUT"; echo "$UNFINISHED_SCAN"; } | \
+  xsltproc "${EXTRA_PARAMS[@]}" "$XSLT" - | \
+  bash -c "$POST_PIPE"

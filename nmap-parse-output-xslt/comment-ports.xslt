@@ -10,6 +10,7 @@
         You can comment services, too:
             nmap-parse-output scan.xml comment-ports $(./nmap-parse-output.sh scan.xml service http | tr "\n" ",") 'this is a http port'
 </npo:comment>
+<npo:category>manipulate</npo:category>
 <!-- see http://exslt.org/str/index.html -->
 
 

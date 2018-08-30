@@ -2,6 +2,8 @@
 <npo:comment>
         Extracts all detected product names.
 </npo:comment>
+<npo:category>extract</npo:category>
+
     <xsl:output method="text" />
     <xsl:strip-space elements="*" />
 

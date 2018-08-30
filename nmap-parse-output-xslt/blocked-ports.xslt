@@ -2,6 +2,7 @@
 <npo:comment>
         Extracts all ports in host:port format, which either admin-prohibited or tcpwrapped.
 </npo:comment>
+<npo:category>extract</npo:category>
     <xsl:output method="text" />
     <xsl:strip-space elements="*" />
     <xsl:template match="/nmaprun/host/ports/port">

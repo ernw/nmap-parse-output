@@ -3,6 +3,7 @@
         Extracts a list of all ports with a specific service (e.g. http, ms-wbt-server, smtp) in host:port format.
         Note: This command is intended for the masscan XML output only.
 </npo:comment>
+<npo:category>extract</npo:category>
     <xsl:output method="text" />
     <xsl:strip-space elements="*" />
     <xsl:template match="/nmaprun/host/ports/port">

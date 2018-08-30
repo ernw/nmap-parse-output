@@ -3,6 +3,7 @@
         Generates a line separated list of HTTP(s) all ports.
         Currently, the following services are detected as HTTP: http, https, http-alt, https-alt, http-proxy, sip, rtsp (potentially incomplete)
 </npo:comment>
+<npo:category>extract</npo:category>
     <xsl:output method="text" />
     <xsl:strip-space elements="*" />
     <xsl:template match="/nmaprun/host/ports/port">

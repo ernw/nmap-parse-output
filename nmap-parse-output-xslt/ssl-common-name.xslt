@@ -3,6 +3,8 @@
         Extracts a list of TLS/SSL ports with the commonName and Subject Alternative Name in the following format:
         host:port	commonName	X509v3 Subject Alternative Name
 </npo:comment>
+<npo:category>extract</npo:category>
+
     <xsl:output method="text" />
     <xsl:strip-space elements="*" />
     <xsl:template match="/nmaprun/host/ports/port/script[@id='ssl-cert']">

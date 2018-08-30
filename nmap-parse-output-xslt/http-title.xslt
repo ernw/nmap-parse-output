@@ -3,6 +3,8 @@
         Extracts a list of HTTP HTML titles in the following format:
         host:port	HTML title
 </npo:comment>
+<npo:category>extract</npo:category>
+
     <xsl:output method="text" />
     <xsl:strip-space elements="*" />
     <xsl:template match="/nmaprun/host/ports/port/script[@id='http-title']">

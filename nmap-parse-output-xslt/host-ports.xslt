@@ -2,6 +2,8 @@
 <npo:comment>
         Extracts a list of all *open* ports in host:port format.
 </npo:comment>
+<npo:category>extract</npo:category>
+
     <xsl:output method="text" />
     <xsl:strip-space elements="*" />
     <xsl:template match="/nmaprun/host/ports/port">

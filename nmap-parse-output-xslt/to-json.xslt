@@ -5,6 +5,7 @@
 <npo:comment>
         Converts nmap scan output to JSON
 </npo:comment>
+<npo:category>convert</npo:category>
 
 	<!--
 	   XSLTJSON Lite v0.2 - Transform arbitrary XML to JSONML	

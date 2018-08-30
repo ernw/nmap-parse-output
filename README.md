@@ -51,16 +51,55 @@ Remove all ports found in `scan-before.xml` from `scan-after.xml` and write the 
 ## Usage
 
       $ ./nmap-parse-output
-      Usage: ./nmap-parse-output NMAP_XML_OUTPUT COMMAND [OPTIONS]
+      Usage: ./nmap-parse-output [options]... <nmap-xml-output> <command> [command-parameters]...
 
       Converts/manipulates/extracts data from nmap scan XML output.
 
-      Commands:
+      Options:
+      -u, --unfinished-scan			 try to read an unfinished scan output
+
+      Extract Data Commands:
+      all-hosts 
+            Generates a line break separated list of all hosts. Can be used to perform an additional scan on this hosts.
+            Can be useful to generate a list of IPs for masscan with nmap (masscan has a more limited support for IP lists):
+            nmap -Pn -n -sL -iL input.lst -oX all-ips.xml; nmap-parse-output all-ips.xml all-hosts
       banner [service-name]
             Extracts a list of all ports with a specific service (e.g. http, ms-wbt-server, smtp) in host:port format.
             Note: This command is intended for the masscan XML output only.
       blocked-ports 
             Extracts all ports in host:port format, which either admin-prohibited or tcpwrapped.
+      host-ports 
+            Extracts a list of all *open* ports in host:port format.
+      hosts-to-port [port]
+            Extracts a list of all hosts that have the given port open in 'host (hostname)' format.
+      hosts 
+            Generates a line break separated list of all hosts with open ports. Can be used to perform an additional scan on this hosts.
+      http-ports 
+            Generates a line separated list of HTTP(s) all ports.
+            Currently, the following services are detected as HTTP: http, https, http-alt, https-alt, http-proxy, sip, rtsp (potentially incomplete)
+      http-title 
+            Extracts a list of HTTP HTML titles in the following format:
+            host:port	HTML title
+      port-info [port]
+            Extracts a list of extra information about the given port in the following format:
+            port;service name;http title
+      ports 
+            Generates a comma-separated list of all ports. Can be used to verify if open/closed ports reachable from another host or generate port lists for specific environments. Filter closed/filtered ports.
+      product 
+            Extracts all detected product names.
+      service-names 
+            Extracts all detected service names.
+      service [service-name]
+            Extracts a list of all *open* ports with a specific service (e.g. http, ms-wbt-server, smtp) in host:port format.
+      ssl-common-name 
+            Extracts a list of TLS/SSL ports with the commonName and Subject Alternative Name in the following format:
+            host:port	commonName	X509v3 Subject Alternative Name
+      tls-ports 
+            Extracts a list of all TLS ports in host:port format. Works only after a script scan. Can be used to do a testssl.sh scan.
+            Example testssl.sh command (generates a text and HTML report for each host):
+                  for f in `cat ~/ssl-hosts.txt`; do ./testssl.sh --logfile ~/testssl.sh-results/$f.log --htmlfile ~/testssl.sh-results/$f.html $f; done
+
+      Manipulate Scan Commands:
       comment-hosts [hosts] [comment]
             Comments a list of hosts in scan result. Expects a comma-separated list as input. The comment will be displayed in the HTML report.
             Example:
@@ -81,20 +120,6 @@ Remove all ports found in `scan-before.xml` from `scan-after.xml` and write the 
             Excludes a list of hosts from scan result by its IP address. Expects a comma-separated list as input.
             You can pipe the output, for instance:
                   nmap-parse-output scan.xml exclude '192.168.1.1,192.168.1.20' | nmap-parse-output - service-names
-      host-ports 
-            Extracts a list of all *open* ports in host:port format.
-      hosts-to-port [port]
-            Extracts a list of all hosts that have the given port open in 'host (hostname)' format.
-      hosts 
-            Generates a line break separated list of all hosts with open ports. Can be used to perform an additional scan on this hosts.
-      html 
-            Converts XML output into an HTML report
-      http-ports 
-            Generates a line separated list of HTTP(s) all ports.
-            Currently, the following services are detected as HTTP: http, https, http-alt, https-alt, http-proxy, sip, rtsp (potentially incomplete)
-      http-title 
-            Extracts a list of HTTP HTML titles in the following format:
-            host:port	HTML title
       include-ports [ports]
             Filter a scan by a list of ports or ports of a specific host (in address:port format) so that only the specified ports are in the output. Expects a comma-separated list as input.
             You can pipe the output, for instance:
@@ -108,39 +133,35 @@ Remove all ports found in `scan-before.xml` from `scan-after.xml` and write the 
             Marks a list of ports or hosts with port (in address:port format) with the given color in scan result. Expects a comma-separated list as input. The comment will be displayed in the HTML report.
             Example:
                   nmap-parse-output scan.xml mark-ports '80,10.0.0.1:8080' red | nmap-parse-output - html &gt; report.html
-      port-info [port]
-            Extracts a list of extra information about the given port in the following format:
-            port;service name;http title
-      ports 
-            Generates a comma-separated list of all ports. Can be used to verify if open/closed ports reachable from another host or generate port lists for specific environments. Filter closed/filtered ports.
-      product 
-            Extracts all detected product names.
       reachable 
             Removes all hosts where all ports a filtered. Can be used to generate a smaller HTML report.
             Example usage to generate HTML report:
                   nmap-parse-output scan.xml reachable | nmap-parse-output - html &gt; scan.html
-      service-names 
-            Extracts all detected service names.
-      service [service-name]
-            Extracts a list of all *open* ports with a specific service (e.g. http, ms-wbt-server, smtp) in host:port format.
-      ssl-common-name 
-            Extracts a list of TLS/SSL ports with the commonName and Subject Alternative Name in the following format:
-            host:port	commonName	X509v3 Subject Alternative Name
-      tls-ports 
-            Extracts a list of all TLS ports in host:port format. Works only after a script scan. Can be used to do a testssl.sh scan.
-            Example testssl.sh command (generates a text and HTML report for each host):
-                  for f in `cat ~/ssl-hosts.txt`; do ./testssl.sh --logfile ~/testssl.sh-results/$f.log --htmlfile ~/testssl.sh-results/$f.html $f; done
+
+      Convert Scan Commands:
+      html 
+            Converts XML output into an HTML report
       to-json 
             Converts nmap scan output to JSON
 
-      [v1.3.0]
+      Misc Commands:
 
+      [v1.4.0]
+
+
+## Changelog
+
+* v1.4.0
+  * Support for unfinished scans
+  * Command are categorized as convert, manipulate, extract and misc now
+* v1.3.0
+  * First public release
 
 ## Adding new Commands
 
 Commands are written as [XSLT](https://en.wikipedia.org/wiki/XSLT). See [nmap-parse-output-xslt/](nmap-parse-output-xslt/) if you want to add new commands. A good way is mostly copying an existing script that does something similar.
 
-The documentation printed in the help page can be written with he ``<comment>`` tag (XML namespace: http://xmlns.sven.to/npo).
+The documentation printed in the help page can be written with the ``<comment>`` tag (XML namespace: http://xmlns.sven.to/npo). A command can have one of the following categories: convert, manipulate or extract. You can set it with the ``<category>`` tag. It is not necessary to set a category, uncategorized commands are will be shown as a misc command in the help page. Commands with an invalid category will not be shown on the help page.
 
 Parameters will be passed as variables named ``$param1``, ``$param2`` and so on. An post processing command can be added with the ``<post-processor>`` tag.
 
@@ -150,11 +171,12 @@ Example XSLT file:
     <npo:comment>
             <!-- Added documentation here -->
     </npo:comment>
+    <npo:category>extract</npo:category>
     <npo:post-processor>sort | uniq</npo:post-processor>
     
     <xsl:output method="text" />
     <xsl:strip-space elements="*" />
-        
+    
     <xsl:template match="/nmaprun/host/ports/port">
         <!-- add your template here -->
         <xsl:if test="state/@state = $param1">
