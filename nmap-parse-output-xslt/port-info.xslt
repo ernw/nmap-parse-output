@@ -3,6 +3,7 @@
         Extracts a list of extra information about the given port in the following format:
         port;service name;http title
 </npo:comment>
+<npo:category>extract</npo:category>
 <npo:post-processor>sort | uniq</npo:post-processor>
     <xsl:output method="text" />
     <xsl:strip-space elements="*" />

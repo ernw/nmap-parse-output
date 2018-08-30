@@ -8,6 +8,7 @@
         Example:
             nmap-parse-output scan.xml mark-ports '80,10.0.0.1:8080' red | nmap-parse-output - html > report.html
 </npo:comment>
+<npo:category>manipulate</npo:category>
 <!-- see http://exslt.org/str/index.html -->
 
 

@@ -8,6 +8,7 @@
         You can pipe the output, for instance:
             nmap-parse-output scan.xml exclude '192.168.1.1,192.168.1.20' | nmap-parse-output - service-names
 </npo:comment>
+<npo:category>manipulate</npo:category>
 <!-- see http://exslt.org/str/index.html -->
 
 

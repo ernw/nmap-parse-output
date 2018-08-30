@@ -10,6 +10,7 @@
         You can comment hosts from another scan, too:
             nmap-parse-output scan.xml comment-hosts $(./nmap-parse-output.sh scan-subnet.xml hosts | tr "\n" ",") 'this host was scanned in subnet, too.'
 </npo:comment>
+<npo:category>manipulate</npo:category>
 <!-- see http://exslt.org/str/index.html -->
 
 

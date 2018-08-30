@@ -4,6 +4,8 @@
         Example testssl.sh command (generates a text and HTML report for each host):
             for f in `cat ~/ssl-hosts.txt`; do ./testssl.sh --logfile ~/testssl.sh-results/$f.log --htmlfile ~/testssl.sh-results/$f.html $f; done
 </npo:comment>
+<npo:category>extract</npo:category>
+
     <xsl:output method="text" />
     <xsl:strip-space elements="*" />
     <xsl:template match="/nmaprun/host/ports/port[script[@id='ssl-cert']]"><!-- Don't use service/@tunnel='ssl' because not all ssl ports has this attribute -->

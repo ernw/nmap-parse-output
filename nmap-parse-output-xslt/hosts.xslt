@@ -2,6 +2,7 @@
 <npo:comment>
         Generates a line break separated list of all hosts with open ports. Can be used to perform an additional scan on this hosts.
 </npo:comment>
+<npo:category>extract</npo:category>
 <npo:post-processor>sort | uniq</npo:post-processor>
 
     <xsl:output method="text" />

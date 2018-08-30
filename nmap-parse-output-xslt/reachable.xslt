@@ -4,6 +4,7 @@
         Example usage to generate HTML report:
             nmap-parse-output scan.xml reachable | nmap-parse-output - html &gt; scan.html
 </npo:comment>
+<npo:category>manipulate</npo:category>
 <xsl:output method="xml" indent="yes"/>
 <xsl:strip-space elements="*" />
 

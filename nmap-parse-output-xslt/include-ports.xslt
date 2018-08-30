@@ -8,6 +8,7 @@
         You can pipe the output, for instance:
             nmap-parse-output scan.xml include-ports '80,443,192.168.0.2:8080' | nmap-parse-output - http-title
 </npo:comment>
+<npo:category>manipulate</npo:category>
 <!-- see http://exslt.org/str/index.html -->
 
 

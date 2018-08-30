@@ -41,6 +41,8 @@
 <npo:comment>
         Converts XML output into an HTML report
 </npo:comment>
+<npo:category>convert</npo:category>
+
 <!-- global variables      -->
 <!-- ............................................................ -->
 <xsl:variable name="nmap_xsl_version">0.9c</xsl:variable>

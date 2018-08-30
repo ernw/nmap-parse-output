@@ -2,6 +2,8 @@
 <npo:comment>
         Generates a comma-separated list of all ports. Can be used to verify if open/closed ports reachable from another host or generate port lists for specific environments. Filter closed/filtered ports.
 </npo:comment>
+<npo:category>extract</npo:category>
+
     <xsl:output method="text" />
     <xsl:strip-space elements="*" />
 
