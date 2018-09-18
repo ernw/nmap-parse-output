@@ -3,7 +3,7 @@
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:json="http://json.org/" xmlns:npo="http://xmlns.sven.to/npo">
 <npo:comment>
-        Converts nmap scan output to JSON
+        Converts a nmap scan output to JSON
 </npo:comment>
 <npo:category>convert</npo:category>
 

@@ -39,7 +39,7 @@
   
 />
 <npo:comment>
-        Converts XML output into an HTML report
+        Converts a XML output into a HTML report
 </npo:comment>
 <npo:category>convert</npo:category>
 

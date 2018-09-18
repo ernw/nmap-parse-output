@@ -42,14 +42,13 @@ function help() {
   print_command_category "Convert Scan" "convert"
   print_command_category "Misc" ""
   
-  echo "[v1.4.0]"
+  echo "[v1.4.1]"
   
   exit 1
 }
 
 # check if xsltproc is installed
 command -v xsltproc >/dev/null 2>&1 || { echo "Please install xsltproc.  Aborting." >&2; exit 1; }
-
 
 # parse global options
 UNFINISHED_SCAN=""
@@ -73,14 +72,11 @@ do
 done
 
 # NMAP_XML_OUTPUT and COMMAND was not provided; print help:
-if [ $# -lt 2 ]
-then
-  help
-fi
+[ $# -lt 2 ] && help
 
 # check if input is readable
 NMAP_XML_OUTPUT=$1
-[ -f "$NMAP_XML_OUTPUT" -o "$NMAP_XML_OUTPUT" = "-" ] || { echo "Can't read nmap file.  Aborting." >&2; exit 1; }
+[ -f "$NMAP_XML_OUTPUT" -o "$NMAP_XML_OUTPUT" = "-" ] || { echo "Can't read nmap file: $NMAP_XML_OUTPUT.  Aborting." >&2; exit 1; }
 
 XSLT=$XSLT_DIR/$2.xslt
 [ -f $XSLT ] || { echo "Unknown command: $2.  Aborting." >&2; exit 1; }

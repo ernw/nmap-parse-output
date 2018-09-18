@@ -140,20 +140,23 @@ Remove all ports found in `scan-before.xml` from `scan-after.xml` and write the 
 
       Convert Scan Commands:
       html 
-            Converts XML output into an HTML report
+            Converts a XML output into a HTML report
       to-json 
-            Converts nmap scan output to JSON
+            Converts a nmap scan output to JSON
 
       Misc Commands:
 
-      [v1.4.0]
+      [v1.4.1]
 
 
 ## Changelog
 
+* v1.4.1
+  * Improved error handling
+  * Bugfix in ports command
 * v1.4.0
   * Support for unfinished scans
-  * Command are categorized as convert, manipulate, extract and misc now
+  * Commands are categorized as convert, manipulate, extract and misc now
 * v1.3.0
   * First public release
 
@@ -196,12 +199,12 @@ More information about XSLT and writing new commands can be found here:
 
 ## Bash Completion
 
-Bash completion can by enabled by adding the following line to your `~/.bash_profile` or `.bashrc`:
+Bash completion can be enabled by adding the following line to your `~/.bash_profile` or `.bashrc`:
 
     source ~/path/to/misc-tools/_nmap-parse-output
 
 ## ZSH Completion
 
-ZSH completion can by enabled by adding the following line to your `~/.zshrc`:
+ZSH completion can be enabled by adding the following line to your `~/.zshrc`:
 
     autoload bashcompinit && bashcompinit && source ~/path/to/misc-tools/_nmap-parse-output
