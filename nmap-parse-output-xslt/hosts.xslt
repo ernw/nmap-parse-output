@@ -7,8 +7,6 @@
 
     <xsl:output method="text" />
     <xsl:strip-space elements="*" />
-
-    <xsl:key name="hostid" match="/nmaprun/host/address/@addr" use="." />
     
     <xsl:template match="/nmaprun/host/ports/port">
     

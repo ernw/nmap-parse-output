@@ -7,7 +7,7 @@
     <xsl:output method="text" />
     <xsl:strip-space elements="*" />
 
-    <xsl:key name="portid" match="/nmaprun/host/ports/port/@portid" use="." />
+    <xsl:key name="portid" match="/nmaprun/host/ports/port/state[@state = 'open']/../@portid" use="." />
     
     <xsl:template match="/">
         <!-- distinct port numbers, see https://stackoverflow.com/questions/2291567/how-to-use-xslt-to-create-distinct-values -->
