@@ -24,7 +24,7 @@
 </xsl:template>
 
 <xsl:template match="/nmaprun/host/ports/port">
-    <xsl:if test="$include-ports = ./@portid or $include-ports = concat(../../address/@addr, ':', ./@portid))">
+    <xsl:if test="($include-ports = ./@portid) or ($include-ports = concat(../../address/@addr, ':', ./@portid))">
         <xsl:copy>
             <xsl:apply-templates select="@*|node()"/>
         </xsl:copy>

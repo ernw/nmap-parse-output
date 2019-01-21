@@ -1,5 +1,5 @@
 #!/bin/bash
-NPO_VERSION=1.4.2
+NPO_VERSION=1.4.3
 
 # get script path
 SOURCE="${BASH_SOURCE[0]}"

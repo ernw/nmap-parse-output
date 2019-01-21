@@ -152,10 +152,12 @@ Remove all ports found in `scan-before.xml` from `scan-after.xml` and write the 
       
       Misc Commands:
       
-      [v1.4.2]
+      [v1.4.3]
 
 ## Changelog
 
+* v1.4.3
+  * Fixed bug in [include-ports command](nmap-parse-output-xslt/include-ports.xslt)
 * v1.4.2
   * Added [nmap-bootstrap-xsl](https://github.com/honze-net/nmap-bootstrap-xsl) as [html-bootstrap command](nmap-parse-output-xslt/html-bootstrap.xslt)
   * Added [nmap-cmdline command](nmap-parse-output-xslt/nmap-cmdline.xslt)
