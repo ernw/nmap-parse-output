@@ -1,4 +1,5 @@
 #!/bin/bash
+NPO_VERSION=1.4.2
 
 # get script path
 SOURCE="${BASH_SOURCE[0]}"
@@ -42,7 +43,7 @@ function help() {
   print_command_category "Convert Scan" "convert"
   print_command_category "Misc" ""
   
-  echo "[v1.4.1]"
+  echo "[v$NPO_VERSION]"
   
   exit 1
 }
