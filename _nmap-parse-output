@@ -2,7 +2,7 @@
 
 _nmap-parse-output_completions()
 {
-  local NPO_SCRIPT="$(whereis -b nmap-parse-output | cut -d ' ' -f 2-)"
+  local NPO_SCRIPT="$(whereis -b nmap-parse-output | cut -d ' ' -f 2)"
   if [ -h "$NPO_SCRIPT" ]; then
     local NPO_SCRIPT="$(readlink "$NPO_SCRIPT")"
   fi

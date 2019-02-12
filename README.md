@@ -4,6 +4,22 @@ Converts/manipulates/extracts data from a nmap scan output.
 
 Needs [xsltproc](http://xmlsoft.org/XSLT/xsltproc.html) as dependency.
 
+**Demo**
+
+![Demo](demo.gif)
+
+**Table of Contents**
+- [nmap-parse-output](#nmap-parse-output)
+  - [Examples](#examples)
+  - [Usage](#usage)
+  - [Changelog](#changelog)
+  - [Contribute](#contribute)
+    - [Adding new Commands](#adding-new-commands)
+  - [Installation](#installation)
+    - [Bash Completion](#bash-completion)
+    - [ZSH Completion](#zsh-completion)
+    - [Arch Linux](#arch-linux)
+
 ## Examples
 
 Write HTML output to scan.html:
@@ -62,45 +78,62 @@ Remove all ports found in `scan-before.xml` from `scan-after.xml` and write the 
               Generates a line break separated list of all hosts. Can be used to perform an additional scan on this hosts.
               Can be useful to generate a list of IPs for masscan with nmap (masscan has a more limited support for IP lists):
                 nmap -Pn -n -sL -iL input.lst -oX all-ips.xml; nmap-parse-output all-ips.xml all-hosts
+      
         banner [service-name]
               Extracts a list of all ports with a specific service (e.g. http, ms-wbt-server, smtp) in host:port format.
               Note: This command is intended for the masscan XML output only.
+      
         blocked-ports 
               Extracts all ports in host:port format, which either admin-prohibited or tcpwrapped.
+      
         host-ports-protocol 
               Extracts a list of all *open* ports in host:port format and marks the protocol type (tcp, udp)
+      
         host-ports 
               Extracts a list of all *open* ports in host:port format.
+      
         hosts-to-port [port]
               Extracts a list of all hosts that have the given port open in 'host (hostname)' format.
+      
         hosts 
               Generates a line break separated list of all hosts with open ports. Can be used to perform an additional scan on this hosts.
+      
         http-ports 
               Generates a line separated list of HTTP(s) all ports.
               Currently, the following services are detected as HTTP: http, https, http-alt, https-alt, http-proxy, sip, rtsp (potentially incomplete)
+      
         http-title 
               Extracts a list of HTTP HTML titles in the following format:
               host:port	HTML title
+      
         nmap-cmdline 
               Shows the parameters passed to nmap of the runned scan
+      
         port-info [port]
               Extracts a list of extra information about the given port in the following format:
               port;service name;http title
+      
         ports 
               Generates a comma-separated list of all ports. Can be used to verify if open/closed ports reachable from another host or generate port lists for specific environments. Filter closed/filtered ports.
+      
         product 
               Extracts all detected product names.
+      
         service-names 
               Extracts all detected service names.
+      
         service [service-name]
               Extracts a list of all *open* ports with a specific service (e.g. http, ms-wbt-server, smtp) in host:port format.
+      
         ssl-common-name 
               Extracts a list of TLS/SSL ports with the commonName and Subject Alternative Name in the following format:
               host:port	commonName	X509v3 Subject Alternative Name
+      
         tls-ports 
               Extracts a list of all TLS ports in host:port format. Works only after a script scan. Can be used to do a testssl.sh scan.
               Example testssl.sh command (generates a text and HTML report for each host):
                   for f in `cat ~/ssl-hosts.txt`; do ./testssl.sh --logfile ~/testssl.sh-results/$f.log --htmlfile ~/testssl.sh-results/$f.html $f; done
+      
       
       Manipulate Scan Commands:
         comment-hosts [hosts] [comment]
@@ -109,53 +142,67 @@ Remove all ports found in `scan-before.xml` from `scan-after.xml` and write the 
                   nmap-parse-output scan.xml comment-hosts '10.0.0.1,192.168.10.1' 'allowed services' | nmap-parse-output - html &gt; report.html
               You can comment hosts from another scan, too:
                   nmap-parse-output scan.xml comment-hosts $(./nmap-parse-output.sh scan-subnet.xml hosts | tr "\n" ",") 'this host was scanned in subnet, too.'
+      
         comment-ports [ports] [comment]
               Comments a list of ports or hosts with port (in address:port format) in scan result. Expects a comma-separated list as input. The comment will be displayed in the HTML report.
               Example:
                   nmap-parse-output scan.xml comment-ports '80,10.0.0.1:8080' 'allowed services' | nmap-parse-output - html &gt; report.html
               You can comment services, too:
                   nmap-parse-output scan.xml comment-ports $(./nmap-parse-output.sh scan.xml service http | tr "\n" ",") 'this is a http port'
+      
         exclude-ports [ports]
               Excludes a list of ports or ports of a specific host (in address:port format) from a scan result. Expects a comma-separated list as input.
               You can pipe the output, for instance:
                   nmap-parse-output scan.xml exclude '80,443,192.168.0.2:80' | nmap-parse-output - service-names
+      
         exclude [hosts]
               Excludes a list of hosts from scan result by its IP address. Expects a comma-separated list as input.
               You can pipe the output, for instance:
                   nmap-parse-output scan.xml exclude '192.168.1.1,192.168.1.20' | nmap-parse-output - service-names
+      
         include-ports [ports]
               Filter a scan by a list of ports or ports of a specific host (in address:port format) so that only the specified ports are in the output. Expects a comma-separated list as input.
               You can pipe the output, for instance:
                   nmap-parse-output scan.xml include-ports '80,443,192.168.0.2:8080' | nmap-parse-output - http-title
+      
         include [hosts]
               Filter a scan by a list of hosts so that only the specified hosts are in the output.
               Filter a list of hosts from scan result by its IP address. Expects a comma-separated list as input.
               You can pipe the output, for instance:
                   nmap-parse-output scan.xml include '192.168.1.1,192.168.1.20' | nmap-parse-output - service-names
+      
         mark-ports [ports] [color]
               Marks a list of ports or hosts with port (in address:port format) with the given color in scan result. Expects a comma-separated list as input. The comment will be displayed in the HTML report.
               Example:
                   nmap-parse-output scan.xml mark-ports '80,10.0.0.1:8080' red | nmap-parse-output - html &gt; report.html
+      
         reachable 
               Removes all hosts where all ports a filtered. Can be used to generate a smaller HTML report.
               Example usage to generate HTML report:
                   nmap-parse-output scan.xml reachable | nmap-parse-output - html &gt; scan.html
       
+      
       Convert Scan Commands:
         html-bootstrap 
               Converts the XML output into a fancy HTML report based on Bootstrap.
               Note: This HTML report requests JS/CSS libs from CDNs. However, the generated file uses the no-referrer meta tag and subresource integrity to protect the confidentiality.
+      
         html 
               Converts a XML output into a HTML report
+      
         to-json 
               Converts a nmap scan output to JSON
       
+      
       Misc Commands:
       
-      [v1.4.3]
+      [v1.4.4]
 
 ## Changelog
 
+* v1.4.4
+  * Fixed bug in [bash completion](_nmap-parse-output) when installed system-wide
+  * Improved documentation
 * v1.4.3
   * Fixed bug in [include-ports command](nmap-parse-output-xslt/include-ports.xslt)
 * v1.4.2
@@ -171,7 +218,9 @@ Remove all ports found in `scan-before.xml` from `scan-after.xml` and write the 
 * v1.3.0
   * First public release
 
-## Adding new Commands
+## Contribute
+
+### Adding new Commands
 
 Commands are written as [XSLT](https://en.wikipedia.org/wiki/XSLT). See [nmap-parse-output-xslt/](nmap-parse-output-xslt/) if you want to add new commands. A good way is mostly copying an existing script that does something similar.
 
@@ -208,14 +257,34 @@ More information about XSLT and writing new commands can be found here:
 - http://www.exslt.org/
 - http://xmlsoft.org/XSLT/xsltproc.html
 
-## Bash Completion
+## Installation
+
+Requierements:
+* bash
+* [xsltproc](http://xmlsoft.org/XSLT/xsltproc.html)
+
+Check out the repository and run it:
+
+      git clone https://github.com/ernw/nmap-parse-output.git
+      cd nmap-parse-output
+      ./nmap-parse-output
+
+You can create a link to the ``nmap-parse-output`` script in your local bin directory or add the directory into your path if you want to execute it directly. Add the following line into your ``~/.bash_profile`` or your ``~/.zshrc`` file:
+
+      export PATH="$PATH:$PATH_TO_YOUR_NMAP_PARSE_OUTPUT_DIR"
+
+### Bash Completion
 
 Bash completion can be enabled by adding the following line to your `~/.bash_profile` or `.bashrc`:
 
     source ~/path/to/nmap-parse-output/_nmap-parse-output
 
-## ZSH Completion
+### ZSH Completion
 
 ZSH completion can be enabled by adding the following line to your `~/.zshrc`:
 
     autoload bashcompinit && bashcompinit && source ~/path/to/nmap-parse-output/_nmap-parse-output
+
+### Arch Linux
+
+You can use the [AUR](https://aur.archlinux.org) package: https://aur.archlinux.org/packages/nmap-parse-output
