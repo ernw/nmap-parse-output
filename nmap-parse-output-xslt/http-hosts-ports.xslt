@@ -7,7 +7,7 @@
     <xsl:output method="text" />
     <xsl:strip-space elements="*" />
     <xsl:template match="/nmaprun/host/ports/port">
-        <xsl:if test="service/@name='http' or service/@name='http-alt' or service/@name='http-proxy' or (service/@name='sip' and not( script/@id='ssl-cert')) or (service/@name='rtsp' and not(script/@id='ssl-cert'))">
+        <xsl:if test="(service/@name='http' and not (service/@tunnel='ssl')) or service/@name='http-alt' or (service/@name='http-proxy' and not (service/@tunnel='ssl')) or (service/@name='sip' and not( script/@id='ssl-cert')) or (service/@name='rtsp' and not(script/@id='ssl-cert'))">
             <xsl:text>http://</xsl:text>
             <xsl:value-of select="../../hostnames/hostname/@name"/>
             <xsl:text>:</xsl:text>
@@ -15,7 +15,7 @@
             <xsl:text>
 </xsl:text>
         </xsl:if>
-        <xsl:if test="service/@name='https' or service/@name='https-alt' or (service/@name='sip' and script/@id='ssl-cert') or (service/@name='rtsp' and script/@id='ssl-cert') or (service/@name='http' and script/@id='ssl-cert') or (service/@name='http-alt' and script/@id='ssl-cert') or (service/@name='http-proxy' and script/@id='ssl-cert')">
+        <xsl:if test="service/@name='https' or service/@name='https-alt' or (service/@name='sip' and script/@id='ssl-cert') or (service/@name='rtsp' and script/@id='ssl-cert') or (service/@name='http' and script/@id='ssl-cert') or (service/@name='http-alt' and script/@id='ssl-cert') or (service/@name='http-proxy' and script/@id='ssl-cert') or (service/@name='http' and (service/@tunnel='ssl')) or (service/@name='http-proxy' and (service/@tunnel='ssl')) ">
             <xsl:text>https://</xsl:text>
             <xsl:value-of select="../../hostnames/hostname/@name"/>
             <xsl:text>:</xsl:text>
