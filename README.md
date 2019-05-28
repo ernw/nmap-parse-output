@@ -113,17 +113,23 @@ Remove all ports found in `scan-before.xml` from `scan-after.xml` and write the 
               Extracts a list of extra information about the given port in the following format:
               port;service name;http title
       
+        ports-reachable 
+              Generates a comma-separated list of all reachable ports (open and closed, unfiltered). Can be used to verify if ports reachable from another host or generate port lists for specific environments.
+      
         ports 
-              Generates a comma-separated list of all ports. Can be used to verify if open/closed ports reachable from another host or generate port lists for specific environments. Filter closed/filtered ports.
+              Generates a comma-separated list of all open ports. Can be used to verify if open ports reachable from another host or generate port lists for specific environments. Closed/filtered ports are not shown in the list.
       
         product 
               Extracts all detected product names.
       
         service-names 
-              Extracts all detected service names.
+              Extracts all detected service names (on open ports).
       
         service [service-name]
               Extracts a list of all *open* ports with a specific service (e.g. http, ms-wbt-server, smtp) in host:port format.
+      
+        show-comments 
+              Shows comments added by the comment-* commands.
       
         ssl-common-name 
               Extracts a list of TLS/SSL ports with the commonName and Subject Alternative Name in the following format:
@@ -196,10 +202,14 @@ Remove all ports found in `scan-before.xml` from `scan-after.xml` and write the 
       
       Misc Commands:
       
-      [v1.4.4]
+      [v1.4.5]
 
 ## Changelog
 
+* v1.4.5
+  * Show only service-names of open ports
+  * Splitted ports command in: ports and ports-reachable
+  * Added show-comments command
 * v1.4.4
   * Fixed bug in [bash completion](_nmap-parse-output) when installed system-wide
   * Improved documentation
