@@ -53,6 +53,12 @@ Filter `scan-all.xml` to include only hosts scanned in `scan-subnet.xml` and wri
 
     $ ./nmap-parse-output scan-all.xml include $(./nmap-parse-output.sh scan-subnet.xml hosts | tr "\n" ",") > filtered-scan.xml
 
+Generate a subreport with results only from the networks 10.0.1.0/24 and 10.80.0.0/24 from `big-scan-result.xml`:
+
+    $ ./nmap-parse-output big-scan-result.xml \
+      include $(nmap -Pn -n -sL 10.0.1.0/24 10.80.0.0/24 -oX - | nmap-parse-output - all-hosts | tr "\n" ',') \
+      > networks-10.0.1.0-24-and-10.80.0.0-24.xml
+
 Add comments to a scan, mark specific ports red, and generate a HTML report with the annotations:
 
     $ ./nmap-parse-output scan.xml comment-ports '8080,10.0.20.4:443' 'this port should be filtered'
@@ -60,9 +66,25 @@ Add comments to a scan, mark specific ports red, and generate a HTML report with
       | ./nmap-parse-output - comment-hosts '10.0.20.1' 'look further into this host'
       | ./nmap-parse-output - html > test.html
 
-Remove all ports found in `scan-before.xml` from `scan-after.xml` and write the output to `filtered-scan.xml`
+Remove all ports found in `scan-before.xml` from `scan-after.xml` and write the output to `filtered-scan.xml`:
 
     $ ./nmap-parse-output scan-after.xml exclude-ports $(./nmap-parse-output.sh scan-before.xml host-ports | tr "\n" ",") > filtered-scan.xml
+
+Group hosts by open TCP ports:
+
+    $ ./nmap-parse-output scan.xml group-by-ports
+    - Open TCP ports 22,443 on:
+      - 192.168.1.73
+      - 192.168.1.74
+    - Open TCP ports 8080 on:
+      - 192.168.1.135
+    - No open TCP ports on:
+      - 192.168.1.71
+      - 192.168.1.81
+
+Rerun TCP scan for all alive hosts but only scan open ports found in the previous scan:
+
+      $ for host in ./nmap-parse-output scan.xml hosts; do nmap -sSVC -p $(./nmap-parse-output scan.xml include $host | nmap-parse-output - ports) -oA $host.xml -vv -Pn; done
 
 ## Usage
 
@@ -85,6 +107,9 @@ Remove all ports found in `scan-before.xml` from `scan-after.xml` and write the 
       
         blocked-ports 
               Extracts all ports in host:port format, which either admin-prohibited or tcpwrapped.
+      
+        group-by-ports 
+              Groups hosts by open TCP ports. Generates a human-readable list in the markdown format.
       
         host-ports-protocol 
               Extracts a list of all *open* ports in host:port format and marks the protocol type (tcp, udp)
@@ -121,6 +146,9 @@ Remove all ports found in `scan-before.xml` from `scan-after.xml` and write the 
       
         product 
               Extracts all detected product names.
+      
+        search-product 
+              Search in product names (case sensitive).
       
         service-names 
               Extracts all detected service names (on open ports).
@@ -202,10 +230,14 @@ Remove all ports found in `scan-before.xml` from `scan-after.xml` and write the 
       
       Misc Commands:
       
-      [v1.4.5]
+      [v1.4.6]
 
 ## Changelog
 
+* v1.4.6
+  * Added search-product command
+  * Added group-by-ports command
+  * Added examples for generating subreports, group-by-ports command, and rerun scans
 * v1.4.5
   * Show only service-names of open ports
   * Splitted ports command in: ports and ports-reachable
