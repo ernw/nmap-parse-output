@@ -3,7 +3,7 @@
     xmlns:set="http://exslt.org/sets"
     extension-element-prefixes="func npo set">
 <npo:comment>
-        Groups hosts by open TCP ports. Generates a human-readable list in the markdown format.
+        Groups hosts by open TCP ports and generates a human-readable list in the markdown format.
 </npo:comment>
 <npo:category>extract</npo:category>
 
@@ -42,7 +42,7 @@
             <xsl:text> on:
 </xsl:text>
             <xsl:for-each select="key('key', npo:portlist(.))">
-                <xsl:text>  - </xsl:text><xsl:value-of select="address/@addr"/><xsl:text>
+                <xsl:text>  - </xsl:text><xsl:value-of select="address/@addr"/><xsl:if test="hostnames/hostname"> (<xsl:value-of select="hostnames/hostname/@name"/>)</xsl:if><xsl:text>
 </xsl:text>
             </xsl:for-each>
         </xsl:for-each>
