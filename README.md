@@ -74,12 +74,12 @@ Group hosts by open TCP ports:
 
     $ ./nmap-parse-output scan.xml group-by-ports
     - Open TCP ports 22,443 on:
-      - 192.168.1.73
-      - 192.168.1.74
+      - 192.168.1.73 (web.local)
+      - 192.168.1.74 (web2.local)
     - Open TCP ports 8080 on:
       - 192.168.1.135
     - No open TCP ports on:
-      - 192.168.1.71
+      - 192.168.1.71 (db.local)
       - 192.168.1.81
 
 Rerun TCP scan for all alive hosts but only scan open ports found in the previous scan:
@@ -109,7 +109,13 @@ Rerun TCP scan for all alive hosts but only scan open ports found in the previou
               Extracts all ports in host:port format, which either admin-prohibited or tcpwrapped.
       
         group-by-ports 
-              Groups hosts by open TCP ports. Generates a human-readable list in the markdown format.
+              Groups hosts by open TCP ports and generates a human-readable list in the markdown format.
+      
+        group-by-product 
+              Groups open ports by product name and generates a human-readable list in the markdown format. The command ignores ports with empty product name.
+      
+        group-by-service 
+              Groups open ports by service name and generates a human-readable list in the markdown format.
       
         host-ports-protocol 
               Extracts a list of all *open* ports in host:port format and marks the protocol type (tcp, udp)
@@ -123,9 +129,14 @@ Rerun TCP scan for all alive hosts but only scan open ports found in the previou
         hosts 
               Generates a line break separated list of all hosts with open ports. Can be used to perform an additional scan on this hosts.
       
+        http-info 
+              Extracts a list of extra information about the HTTP ports from a script scan in the following format:
+              host:port   service-name    service-tunnel  product  http-server-header  http-title   redirect_url
+      
         http-ports 
-              Generates a line separated list of HTTP(s) all ports.
-              Currently, the following services are detected as HTTP: http, https, http-alt, https-alt, http-proxy, sip, rtsp (potentially incomplete)
+              Generates a line separated list of all HTTP(s) ports. Script scan output is recommended.
+              Currently, the following services are detected as HTTP: http, https, http-alt, https-alt, http-proxy, sip, rtsp, soap, vnc-http, caldav (potentially incomplete) and to get a more reliable result all ports which which have output in the http-methods script. 
+              On ports where HTTPs and HTTP is responding, the HTTPs port is preferred.
       
         http-title 
               Extracts a list of HTTP HTML titles in the following format:
@@ -136,7 +147,7 @@ Rerun TCP scan for all alive hosts but only scan open ports found in the previou
       
         port-info [port]
               Extracts a list of extra information about the given port in the following format:
-              port;service name;http title
+              port;service-name;http-server-header;http title
       
         ports-reachable 
               Generates a comma-separated list of all reachable ports (open and closed, unfiltered). Can be used to verify if ports reachable from another host or generate port lists for specific environments.
@@ -164,7 +175,7 @@ Rerun TCP scan for all alive hosts but only scan open ports found in the previou
               host:port	commonName	X509v3 Subject Alternative Name
       
         tls-ports 
-              Extracts a list of all TLS ports in host:port format. Works only after a script scan. Can be used to do a testssl.sh scan.
+              Extracts a list of all TLS ports in host:port format. Works only reliable after a script scan. Can be used to do a testssl.sh scan.
               Example testssl.sh command (generates a text and HTML report for each host):
                   for f in `cat ~/ssl-hosts.txt`; do ./testssl.sh --logfile ~/testssl.sh-results/$f.log --htmlfile ~/testssl.sh-results/$f.html $f; done
       
@@ -230,10 +241,18 @@ Rerun TCP scan for all alive hosts but only scan open ports found in the previou
       
       Misc Commands:
       
-      [v1.4.6]
+      [v1.5.1]
 
 ## Changelog
 
+* v1.5.1
+  * More reliable SSL/TLS detection
+  * More reliable HTTP(s) port detection
+  * Added group-by-service command
+  * Added group-by-product command
+  * Added http-info command
+  * Added http-server-header to port-info command
+  * Added hostname to group-by-ports command
 * v1.4.6
   * Added search-product command
   * Added group-by-ports command
