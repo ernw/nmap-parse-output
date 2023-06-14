@@ -18,7 +18,7 @@ Needs [xsltproc](http://xmlsoft.org/XSLT/xsltproc.html) as dependency.
   - [Installation](#installation)
     - [Bash Completion](#bash-completion)
     - [ZSH Completion](#zsh-completion)
-    - [Arch Linux](#arch-linux)
+    - [Distro package](#distro-prackage)
 
 ## Examples
 
@@ -346,6 +346,6 @@ ZSH completion can be enabled by adding the following line to your `~/.zshrc`:
 
     autoload bashcompinit && bashcompinit && source ~/path/to/nmap-parse-output/_nmap-parse-output
 
-### Arch Linux
+### Distro Packages
 
-You can use the [AUR](https://aur.archlinux.org) package: https://aur.archlinux.org/packages/nmap-parse-output
+[![Packaging status](https://repology.org/badge/vertical-allrepos/nmap-parse-output.svg)](https://repology.org/project/nmap-parse-output/versions)
