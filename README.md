@@ -346,6 +346,6 @@ ZSH completion can be enabled by adding the following line to your `~/.zshrc`:
 
     autoload bashcompinit && bashcompinit && source ~/path/to/nmap-parse-output/_nmap-parse-output
 
-### Distro Package
+### Distro Packages
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/nmap-parse-output.svg)](https://repology.org/project/nmap-parse-output/versions)
